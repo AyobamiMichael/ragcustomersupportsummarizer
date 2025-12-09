@@ -1,0 +1,52 @@
+# Backend Requirements - requirements.txt
+
+# FastAPI and Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+gunicorn==21.2.0
+python-multipart==0.0.6
+
+# ML and NLP
+sentence-transformers==2.3.1
+transformers==4.37.0
+torch==2.1.2
+scikit-learn==1.4.0
+nltk==3.8.1
+networkx==3.2.1
+numpy==1.26.3
+scipy==1.12.0
+
+# Text Processing
+spacy==3.7.2
+beautifulsoup4==4.12.3
+lxml==5.1.0
+python-magic==0.4.27
+
+# Data and Caching
+redis==5.0.1
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# LLM Integration
+anthropic==0.18.0
+openai==1.10.0  # Optional, for OpenAI models
+
+# Monitoring and Logging
+prometheus-client==0.19.0
+structlog==24.1.0
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# Utilities
+python-dotenv==1.0.0
+tenacity==8.2.3  # For retries
+aiofiles==23.2.1
+
+# Optional: Vector DB clients
+# pinecone-client==3.0.0
+# weaviate-client==4.4.0
+# qdrant-client==1.7.0
