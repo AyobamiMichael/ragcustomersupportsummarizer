@@ -1,3 +1,5 @@
+# backend/Dockerfile - Fixed for Render.com deployment
+
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -13,14 +15,18 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 # Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Download NLTK data (required)
+RUN python -c "import nltk; nltk.download('punkt', quiet=True); nltk.download('stopwords', quiet=True)"
 
-# Download NLTK data
-RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+# Download sentence transformer model (required)
+RUN python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L6-v2', cache_folder='/app/models'); print('Model downloaded')"
 
-# Download spaCy model
-RUN python -m spacy download en_core_web_sm
+# Note: spaCy is OPTIONAL - the app works without it
+# If you want spaCy, use this instead:
+# RUN pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
 
 # Copy application code
 COPY . .
@@ -28,14 +34,13 @@ COPY . .
 # Create models directory
 RUN mkdir -p /app/models
 
-# Expose port
+# Expose port (Render will override with PORT env var)
 EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:8000/health || exit 1
+  CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
 # Run application
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-
+# Use PORT environment variable from Render
+CMD uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1
